@@ -65,6 +65,9 @@ class Message(ChatGetter, SenderGetter, TLObject):
         pinned (`bool`):
             Whether this message is currently pinned or not.
 
+        noforwards (`bool`):
+            Whether this message is can be forwarded or not.
+
         id (`int`):
             The ID of this message. This field is *always* present.
             Any other member is optional and may be `None`.
@@ -141,6 +144,10 @@ class Message(ChatGetter, SenderGetter, TLObject):
             (photo albums or video albums), all of them will
             have the same value here.
 
+        reactions (:tl:`MessageReactions`)
+            An optional list of reactions this message has.
+            If the field is `None`, this message does not have any reactions.
+
         restriction_reason (List[:tl:`RestrictionReason`])
             An optional list of reasons why this message was restricted.
             If the list is `None`, this message has not been restricted.
@@ -189,10 +196,12 @@ class Message(ChatGetter, SenderGetter, TLObject):
             edit_date: Optional[datetime] = None,
             post_author: Optional[str] = None,
             grouped_id: Optional[int] = None,
+            reactions: Optional[types.MessageReactions] = None,
             from_scheduled: Optional[bool] = None,
             legacy: Optional[bool] = None,
             edit_hide: Optional[bool] = None,
             pinned: Optional[bool] = None,
+            noforwards: Optional[bool] = None,
             restriction_reason: Optional[types.TypeRestrictionReason] = None,
             forwards: Optional[int] = None,
             replies: Optional[types.TypeMessageReplies] = None,
@@ -225,11 +234,13 @@ class Message(ChatGetter, SenderGetter, TLObject):
         self.replies = replies
         self.edit_date = edit_date
         self.pinned = pinned
+        self.noforwards = noforwards
         self.post_author = post_author
         self.grouped_id = grouped_id
         self.restriction_reason = restriction_reason
         self.ttl_period = ttl_period
         self.action = action
+        self.reactions = reactions
 
         # Convenient storage for custom functions
         # TODO This is becoming a bit of bloat
