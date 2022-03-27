@@ -65,6 +65,9 @@ class Message(ChatGetter, SenderGetter, TLObject):
         pinned (`bool`):
             Whether this message is currently pinned or not.
 
+        noforwards (`bool`):
+            Whether this message is can be forwarded or not.
+
         id (`int`):
             The ID of this message. This field is *always* present.
             Any other member is optional and may be `None`.
@@ -193,6 +196,7 @@ class Message(ChatGetter, SenderGetter, TLObject):
             legacy: Optional[bool] = None,
             edit_hide: Optional[bool] = None,
             pinned: Optional[bool] = None,
+            noforwards: Optional[bool] = None,
             restriction_reason: Optional[types.TypeRestrictionReason] = None,
             forwards: Optional[int] = None,
             replies: Optional[types.TypeMessageReplies] = None,
@@ -225,6 +229,7 @@ class Message(ChatGetter, SenderGetter, TLObject):
         self.replies = replies
         self.edit_date = edit_date
         self.pinned = pinned
+        self.noforwards = noforwards
         self.post_author = post_author
         self.grouped_id = grouped_id
         self.restriction_reason = restriction_reason
