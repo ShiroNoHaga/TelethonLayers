@@ -17,16 +17,25 @@ KNOWN_BASE_CLASSES = {
 }
 
 
-def _get_canonical_name(error_code):
+def _get_class_name(error_code):
     """
-    Gets the corresponding canonical name for the given error code.
+    Gets the corresponding class name for the given error code,
+    this either being an integer (thus base error name) or str.
     """
-    # This code should match that of the library itself.
-    name = re.sub(r'[-_\d]', '', error_code).lower()
-    while name.endswith('error'):
-        name = name[:-len('error')]
+    if isinstance(error_code, int):
+        return KNOWN_BASE_CLASSES.get(
+            abs(error_code), 'RPCError' + str(error_code).replace('-', 'Neg')
+        )
 
-    return name
+    if error_code.startswith('2'):
+        error_code = re.sub(r'2', 'TWO_', error_code, count=1)
+
+    if re.match(r'\d+', error_code):
+        raise RuntimeError('error code starting with a digit cannot have valid Python name: {}'.format(error_code))
+
+    return snake_to_camel_case(
+        error_code.replace('FIRSTNAME', 'FIRST_NAME')\
+                  .replace('SLOWMODE', 'SLOW_MODE').lower(), suffix='Error')
 
 
 class Error:
@@ -36,13 +45,18 @@ class Error:
         # Telegram isn't exactly consistent with returned errors anyway.
         self.int_code = codes[0]
         self.str_code = name
-        self.canonical_name = _get_canonical_name(name)
+        self.subclass = _get_class_name(codes[0])
+        self.subclass_exists = abs(codes[0]) in KNOWN_BASE_CLASSES
         self.description = description
 
-        has_captures = '0' in name
-        if has_captures:
+        self.has_captures = '_X' in name
+        if self.has_captures:
+            self.name = _get_class_name(name.replace('_X', '_'))
+            self.pattern = name.replace('_X', r'_(\d+)')
             self.capture_name = re.search(r'{(\w+)}', description).group(1)
         else:
+            self.name = _get_class_name(name)
+            self.pattern = name
             self.capture_name = None
 
 

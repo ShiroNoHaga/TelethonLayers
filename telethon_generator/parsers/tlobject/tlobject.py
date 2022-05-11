@@ -52,7 +52,8 @@ class TLObject:
                 assert self.id == self.infer_id(),\
                     'Invalid inferred ID for ' + repr(self)
 
-        self.class_name = snake_to_camel_case(self.name)
+        self.class_name = snake_to_camel_case(
+            self.name, suffix='Request' if self.is_function else '')
 
         self.real_args = list(a for a in self.sorted_args() if not
                               (a.flag_indicator or a.generic_definition))
