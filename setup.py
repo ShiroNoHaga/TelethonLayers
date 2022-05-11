@@ -180,10 +180,6 @@ def main(argv):
             shutil.rmtree(x, ignore_errors=True)
 
     else:
-        # e.g. install from GitHub
-        if GENERATOR_DIR.is_dir():
-            generate(['tl', 'errors'])
-
         # Get the long description from the README file
         with open('README.rst', 'r', encoding='utf-8') as f:
             long_description = f.read()
@@ -240,5 +236,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    with TempWorkDir():
-        main(sys.argv)
+    main(sys.argv)
